@@ -21,3 +21,10 @@ class Solution:
                 s = s[1:]
         #print(num)
         return num
+
+assert Solution().romanToInt("III") == 3
+assert Solution().romanToInt("LVIII") == 58
+assert Solution().romanToInt("MCMXCIV") == 1994
+#print(Solution().romanToInt("III"))
+#print(Solution().romanToInt("LVIII"))
+#print(Solution().romanToInt("MCMXCIV"))
