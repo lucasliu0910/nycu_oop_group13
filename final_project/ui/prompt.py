@@ -1,7 +1,7 @@
 # ui/prompt.py
 import pygame
 from constants import WIDTH, HEIGHT
-
+import textwrap
 def draw_choices(screen, font, choices, topleft=None):
     """
     在畫面上顯示一組選項列表 choices = [(label, text), ...]。
@@ -43,26 +43,27 @@ def draw_prompt(screen, font, text, feedback=False):
     screen.blit(bg, (x-5, y-5))
     screen.blit(surf, (x, y))
     
-
-def draw_end(screen, font, msg1, msg2, bg=(200,200,200)):
+def draw_end(screen, font, msg1, msg2, bg=(200,200,200), wrap_width=40, y_start=None):
+    """
+    清空畫面並顯示結束訊息，支援手動換行或自動換行。
+    y_start: 第一行文字的起始 y 座標，若 None 則用 HEIGHT//4。
+    """
     screen.fill(bg)
-    # 先處理第一段 msg1
-    lines1 = msg1.split("\n")
-    y = HEIGHT // 4
-    for line in lines1:
-        surf = font.render(line, True, (255,0,0))
-        x = (WIDTH - surf.get_width()) // 2
-        screen.blit(surf, (x, y))
-        y += surf.get_height() + 5
+    # 如果傳了 y_start 就用它，否則預設從 1/4 高度開始
+    y = HEIGHT//4 if y_start is None else y_start
 
-    # 再處理第二段 msg2
-    lines2 = msg2.split("\n")
-    y += 10  # 兩段中點補點縫隙
-    for line in lines2:
-        surf = font.render(line, True, (0,0,0))
-        x = (WIDTH - surf.get_width()) // 2
-        screen.blit(surf, (x, y))
-        y += surf.get_height() + 5
+    for text, color in [(msg1, (255,0,0)), (msg2, (0,0,0))]:
+        if "\n" in text:
+            lines = text.split("\n")
+        else:
+            import textwrap
+            lines = textwrap.wrap(text, wrap_width)
+        for line in lines:
+            surf = font.render(line, True, color)
+            x = (WIDTH - surf.get_width())//2
+            screen.blit(surf, (x, y))
+            y += surf.get_height() + 5
+        y += 10
 
     pygame.display.flip()
-    return y  
+    return y

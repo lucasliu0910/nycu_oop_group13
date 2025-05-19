@@ -132,44 +132,44 @@ def main():
         dy = (keys[K_DOWN] or keys[K_s]) - (keys[K_UP] or keys[K_w])
         player.move(dx*PLAYER_SPEED, dy*PLAYER_SPEED, screen.get_rect(), buildings)
 
-    # 結局畫面
-    msg1 = f"結局：{ending['key']}"
-    msg2 = f"最終 社交:{player.social}  成績:{player.grade}"
-    # 使用較小字型並靠近頂部
+# 結局畫面
+        # 1) 準備文字和字型
+    msg1     = ending['key']
+    msg2     = f"最終 社交:{player.social}  成績:{player.grade}"
     end_font = get_font(24)
+
+    # 2) 清屏並由 10% 處開始繪製（自動換行／手動換行）
     screen.fill((200, 200, 200))
-    # 第一行文字
-    surf1 = end_font.render(msg1, True, (255, 0, 0))
-    x1 = (WIDTH - surf1.get_width()) // 2
-    y1 = int(HEIGHT * 0.1)
-    screen.blit(surf1, (x1, y1))
-    # 第二行文字
-    surf2 = end_font.render(msg2, True, (0, 0, 0))
-    x2 = (WIDTH - surf2.get_width()) // 2
-    y2 = y1 + surf1.get_height() + 5
-    screen.blit(surf2, (x2, y2))
-    pygame.display.flip()
-    # 若有結局圖片，固定縮放到畫面一半內並貼上文字下方
+    start_y  = int(HEIGHT * 0.10)
+    bottom_y = draw_end(
+        screen,
+        end_font,
+        msg1,
+        msg2,
+        bg=(200,200,200),
+        wrap_width=40,
+        y_start=start_y
+    )
+
+    # 3) 如果有圖片，就按 bottom_y＋10px 的位置貼上，且縮放到螢幕一半大小
     if ending.get('image'):
-        img = pygame.image.load(ending['image']).convert_alpha()
-        max_w = int(WIDTH * 0.5)
+        img   = pygame.image.load(ending['image']).convert_alpha()
+        max_w = int(WIDTH  * 0.5)
         max_h = int(HEIGHT * 0.5)
-        w, h = img.get_size()
+        w, h  = img.get_size()
         scale = min(max_w / w, max_h / h, 1)
         if scale < 1:
             img = pygame.transform.smoothscale(img, (int(w * scale), int(h * scale)))
-        img_rect = img.get_rect(midtop=(WIDTH // 2, y2 + end_font.get_height() + 10))
+        img_rect = img.get_rect(midtop=(WIDTH//2, bottom_y + 10))
         screen.blit(img, img_rect)
         pygame.display.flip()
 
-    # 等待玩家按鍵或關閉
+    # 4) 等待玩家按鍵或關閉
     while True:
         e = pygame.event.wait()
         if e.type in (QUIT, KEYDOWN):
-            pygame.quit(); sys.exit()
-        e = pygame.event.wait()
-        if e.type in (QUIT, KEYDOWN):
-            pygame.quit(); sys.exit()
+            pygame.quit()
+            sys.exit()
 
 if __name__ == "__main__":
     main()
