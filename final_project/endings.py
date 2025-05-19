@@ -9,7 +9,7 @@ EARLY_FAILS = [
 FINAL_ENDINGS = [
     {"key": "教授這裡風很大", 
      "condition": lambda p, i: p.grade < 3,
-     "image": "pictures/1662286848503.jpg"},
+     "image": "final_project/pictures/1662286848503.jpg"},
     # {"key": "平凡的一頁", "condition": lambda p, i: True, "image": None},   # default
 ]
 
